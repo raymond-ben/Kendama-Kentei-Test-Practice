@@ -1,89 +1,10 @@
 import flet as ft
-
 from data_loader import (
     get_levels,
     get_classes,
-    get_tricks
+    get_tricks  
 )
-
-# Creates trick cards for each trick
-# Each card contains the trick name, checkboxes for attempts, and an attempt counter
-
-def create_trick_card(number, trick, page, on_completion_changed):
-
-    attempt_count = ft.Text(
-        "Attempts: 0/5"
-    )
-
-    boxes = []
-    
-    is_completed = False
-
-
-    def update_attempts(e):
-
-        nonlocal is_completed
-
-        completed_attempts = sum(
-            1 for box in boxes
-            if box.value
-        )
-
-        attempt_count.value = f"Attempts: {completed_attempts}/5"
-
-# Color logic
-
-        if completed_attempts == 5:
-            trick_title.color = ft.Colors.GREEN
-
-            if not is_completed:
-                is_completed = True
-                on_completion_changed(1)
-       
-        elif completed_attempts > 0:
-            trick_title.color = ft.Colors.YELLOW
-
-            if is_completed:
-                is_completed = False
-                on_completion_changed(-1)
-
-        else:
-            trick_title.color = ft.Colors.RED
-            
-            if is_completed:
-                is_completed = False
-                on_completion_changed(-1)
-
-        page.update()
-
-
-    for i in range(1, 6):
-
-        box = ft.Checkbox(
-            label=str(i)
-        )
-
-        box.on_change = update_attempts
-
-        boxes.append(box)
-
-    trick_title = ft.Text(
-        f"{number}. {trick}",
-        size=18,
-        color=ft.Colors.RED
-    )
-
-    return ft.Column(
-        [
-            trick_title,
-
-            ft.Row(boxes),
-
-            attempt_count,
-
-            ft.Divider()
-        ]
-    )
+from trick_card import TrickCard
 
 def main(page: ft.Page):
 
@@ -198,13 +119,15 @@ def main(page: ft.Page):
 
         for number, trick in enumerate(tricks, start=1):
 
+            card = TrickCard(
+                number,
+                trick,
+                page,
+                update_session_progress
+            )
+
             trick_list.controls.append(
-                create_trick_card(
-                    number,
-                    trick,
-                    page,
-                    update_session_progress
-                    )
+                card.view()
             )
 
 
