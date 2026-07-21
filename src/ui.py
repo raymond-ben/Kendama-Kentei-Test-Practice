@@ -12,9 +12,18 @@ from trick_card import TrickCard
 def build_ui(page: ft.Page):
 
     page.title = "Kendama Kentei Trainer"
-
     page.scroll = ft.ScrollMode.AUTO
 
+
+    title = ft.Text(
+        "Kendama Kentei Test Practice",
+        size=28,
+        weight=ft.FontWeight.BOLD
+    )
+
+    # -------------------------
+    # Dropdowns
+    # -------------------------
 
     level_dropdown = ft.Dropdown(
         label="Select Level",
@@ -25,13 +34,19 @@ def build_ui(page: ft.Page):
     )
 
 
-    class_dropdown = ft.Dropdown(
-        label="Select Class"
-    )
+  
 
+    class_dropdown = ft.Dropdown(
+        label="Select Class",
+        options=[]
+    )
 
     trick_list = ft.Column()
 
+
+    # -------------------------
+    # Progress
+    # -------------------------
 
     completed_tricks = 0
     total_tricks = 0
@@ -49,39 +64,75 @@ def build_ui(page: ft.Page):
     )
 
 
+    # -------------------------
+    # Events
+    # -------------------------
+
     def update_session_progress(change):
 
         nonlocal completed_tricks
 
         completed_tricks += change
 
-
         progress_text.value = (
             f"Completed: {completed_tricks}/{total_tricks}"
         )
 
-
-        if total_tricks:
+        if total_tricks > 0:
             progress_bar.value = (
                 completed_tricks / total_tricks
             )
 
+        page.update()
+
+    def level_changed(e):
+        print("LEVEL CHANGED")
+        print("Selected:", level_dropdown.value)
+
+        classes = get_classes(
+            level_dropdown.value
+        )
+
+        print("Classes:", classes)
+
+        class_dropdown.options = [
+            ft.dropdown.Option(c)
+            for c in classes
+        ]
+
+
+        class_dropdown.value = None
+        print(class_dropdown.options)
+        class_dropdown.update()
 
         page.update()
 
 
-    def level_changed(e):
+    def old_level_changed(e):
+
+        print("===== LEVEL CHANGED =====")
+        print("Selected Level:",level_dropdown.value)
+
+
+        classes = get_classes(
+            level_dropdown.value
+        )
+
+
+        print("Classes returned:", classes)
+
 
         class_dropdown.options = [
             ft.dropdown.Option(c)
-            for c in get_classes(
-                level_dropdown.value
-            )
+            for c in classes
         ]
+
+        print("Dropdown options updated")
 
         class_dropdown.value = None
 
         page.update()
+
 
 
     level_dropdown.on_change = level_changed
@@ -91,6 +142,11 @@ def build_ui(page: ft.Page):
 
         nonlocal total_tricks
         nonlocal completed_tricks
+
+
+        print("Starting Practice")
+        print(level_dropdown.value)
+        print(class_dropdown.value)
 
 
         tricks = get_tricks(
@@ -126,6 +182,7 @@ def build_ui(page: ft.Page):
                 update_session_progress
             )
 
+
             trick_list.controls.append(
                 card.view()
             )
@@ -134,13 +191,22 @@ def build_ui(page: ft.Page):
         page.update()
 
 
+
     start_button = ft.ElevatedButton(
         "Start Practice",
         on_click=start_practice
     )
 
 
+    # -------------------------
+    # Layout
+    # -------------------------
+
     page.add(
+
+        title,
+
+        ft.Divider(),
 
         level_dropdown,
 
