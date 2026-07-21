@@ -6,6 +6,63 @@ from data_loader import (
     get_tricks
 )
 
+# Creates trick cards for each trick
+# Each card contains the trick name, checkboxes for attempts, and an attempt counter
+def create_trick_card(number, trick, page):
+
+    attempt_count = ft.Text(
+        "Attempts: 0/5"
+    )
+
+    boxes = []
+
+
+    def update_attempts(e):
+
+        completed = sum(
+            1 for box in boxes
+            if box.value
+        )
+
+        attempt_count.value = f"Attempts: {completed}/5"
+
+        if completed == 5:
+            trick_title.color = ft.Colors.GREEN
+        elif completed > 0:
+            trick_title.color = ft.Colors.ORANGE
+        else:
+            trick_title.color = ft.Colors.RED
+
+        page.update()
+
+
+    for i in range(1, 6):
+
+        box = ft.Checkbox(
+            label=str(i)
+        )
+
+        box.on_change = update_attempts
+
+        boxes.append(box)
+
+    trick_title = ft.Text(
+        f"{number}. {trick}",
+        size=18,
+        color=ft.Colors.RED
+    )
+
+    return ft.Column(
+        [
+            trick_title,
+
+            ft.Row(boxes),
+
+            attempt_count,
+
+            ft.Divider()
+        ]
+    )
 
 def main(page: ft.Page):
 
@@ -84,28 +141,14 @@ def main(page: ft.Page):
 
         for number, trick in enumerate(tricks, start=1):
 
-            attempt_boxes = ft.Row(
-                [
-                    ft.Checkbox("1"),
-                    ft.Checkbox("2"),
-                    ft.Checkbox("3"),
-                    ft.Checkbox("4"),
-                    ft.Checkbox("5"),
-                ]
+            trick_list.controls.append(
+                create_trick_card(
+                    number,
+                    trick,
+                    page)
             )
 
-            trick_list.controls.append(
-                ft.Column(
-                    [
-                        ft.Text(
-                            f"{number}. {trick}",
-                            size=18
-                        ),
-                        attempt_boxes,
-                        ft.Divider()
-                    ]
-                )
-            )
+
 
         page.update()
 
