@@ -8,30 +8,51 @@ from data_loader import (
 
 # Creates trick cards for each trick
 # Each card contains the trick name, checkboxes for attempts, and an attempt counter
-def create_trick_card(number, trick, page):
+
+def create_trick_card(number, trick, page, on_completion_changed):
 
     attempt_count = ft.Text(
         "Attempts: 0/5"
     )
 
     boxes = []
+    
+    is_completed = False
 
 
     def update_attempts(e):
 
-        completed = sum(
+        nonlocal is_completed
+
+        completed_attempts = sum(
             1 for box in boxes
             if box.value
         )
 
-        attempt_count.value = f"Attempts: {completed}/5"
+        attempt_count.value = f"Attempts: {completed_attempts}/5"
 
-        if completed == 5:
+# Color logic
+
+        if completed_attempts == 5:
             trick_title.color = ft.Colors.GREEN
-        elif completed > 0:
-            trick_title.color = ft.Colors.ORANGE
+
+            if not is_completed:
+                is_completed = True
+                on_completion_changed(1)
+       
+        elif completed_attempts > 0:
+            trick_title.color = ft.Colors.YELLOW
+
+            if is_completed:
+                is_completed = False
+                on_completion_changed(-1)
+
         else:
             trick_title.color = ft.Colors.RED
+            
+            if is_completed:
+                is_completed = False
+                on_completion_changed(-1)
 
         page.update()
 
@@ -90,6 +111,31 @@ def main(page: ft.Page):
 
     trick_list = ft.Column()
 
+    completed_tricks = 0
+    total_tricks = 0
+
+    def update_session_progress(change):
+        nonlocal completed_tricks
+        completed_tricks += change
+        progress_text.value = (
+            f"Completed {completed_tricks}/{total_tricks}"
+        )
+
+        if total_tricks > 0:
+            progress_bar.value = completed_tricks / total_tricks
+
+        page.update()
+
+
+    progress_text = ft.Text(
+        "Completed 0/0",
+        size=18
+    )
+
+    progress_bar = ft.ProgressBar(
+        width=500,
+        value=0
+    )
 
     # -----------------------
     # Events
@@ -131,6 +177,17 @@ def main(page: ft.Page):
 
         trick_list.controls.clear()
 
+        global total_tricks, completed_tricks
+
+        total_tricks = len(tricks)
+        completed_tricks = 0
+
+        progress_text.value = (
+            f"Completed 0/{total_tricks}"
+        )
+
+        progress_bar.value = 0
+
         trick_list.controls.append(
             ft.Text(
                 f"{selected_level} - {selected_class}",
@@ -145,7 +202,9 @@ def main(page: ft.Page):
                 create_trick_card(
                     number,
                     trick,
-                    page)
+                    page,
+                    update_session_progress
+                    )
             )
 
 
@@ -194,6 +253,10 @@ def main(page: ft.Page):
         ),
 
         ft.Divider(),
+
+        progress_text,
+
+        progress_bar,
 
         trick_list
     )
