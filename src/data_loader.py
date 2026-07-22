@@ -13,14 +13,15 @@ def load_tricks():
         "trick"
     ]
 
-    # Remove empty rows
     df = df.dropna()
 
     # Clean text spacing
-    df["Level"] = df["level"].astype(str).str.strip()
-    df["Class"] = df["class"].astype(str).str.strip()
-    df["Trick"] = df["trick"].astype(str).str.strip()
-   
+    df["level"] = df["level"].astype(str).str.strip()
+    df["class"] = df["class"].astype(str).str.strip()
+    df["trick"] = df["trick"].astype(str).str.strip()
+
+    df["number"] = df["number"].astype(int)
+
     return df
 
 
