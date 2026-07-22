@@ -76,15 +76,12 @@ def build_ui(page: ft.Page):
             level_dropdown.value
         )
 
-        print("Classes:", classes)
-
         class_dropdown.options = [
             ft.dropdown.Option(c)
             for c in classes
         ]
 
         class_dropdown.value = None
-        print(class_dropdown.options)
         class_dropdown.update()
 
         page.update()
