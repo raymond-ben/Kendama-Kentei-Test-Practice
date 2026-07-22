@@ -1,6 +1,4 @@
 import flet as ft
-
-
 class TrickCard:
     def __init__(self, number, trick, page, on_completion_changed):
 
@@ -22,9 +20,7 @@ class TrickCard:
             size=18,
             color=ft.Colors.RED
         )
-
         self.build_checkboxes()
-
 
     def build_checkboxes(self):
 
@@ -37,7 +33,6 @@ class TrickCard:
 
             self.checkboxes.append(checkbox)
 
-
     def update_attempts(self, e):
 
         completed_attempts = sum(
@@ -46,11 +41,9 @@ class TrickCard:
             if box.value
         )
 
-
         self.attempt_count.value = (
             f"Attempts: {completed_attempts}/5"
         )
-
 
         if completed_attempts == 5:
 
@@ -60,7 +53,6 @@ class TrickCard:
                 self.is_completed = True
                 self.on_completion_changed(1)
 
-
         elif completed_attempts > 0:
 
             self.trick_title.color = ft.Colors.YELLOW
@@ -68,7 +60,6 @@ class TrickCard:
             if self.is_completed:
                 self.is_completed = False
                 self.on_completion_changed(-1)
-
 
         else:
 
@@ -78,9 +69,7 @@ class TrickCard:
                 self.is_completed = False
                 self.on_completion_changed(-1)
 
-
         self.page.update()
-
 
     def view(self):
 

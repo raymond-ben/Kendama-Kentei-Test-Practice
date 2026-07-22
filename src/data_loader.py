@@ -15,7 +15,6 @@ def load_tricks():
 
     df = df.dropna()
 
-    # Clean text spacing
     df["level"] = df["level"].astype(str).str.strip()
     df["class"] = df["class"].astype(str).str.strip()
     df["trick"] = df["trick"].astype(str).str.strip()
@@ -24,16 +23,13 @@ def load_tricks():
 
     return df
 
-
 def get_levels():
     df = load_tricks()
     return df["level"].unique().tolist()
 
-
 def get_classes(level):
     df = load_tricks()
     return df[df["level"] == level]["class"].unique().tolist()
-
 
 def get_tricks(level, kclass):
     df = load_tricks()

@@ -5,9 +5,7 @@ from data_loader import (
     get_classes,
     get_tricks
 )
-
 from trick_card import TrickCard
-
 
 def build_ui(page: ft.Page):
 
@@ -21,9 +19,7 @@ def build_ui(page: ft.Page):
         weight=ft.FontWeight.BOLD
     )
 
-    # -------------------------
     # Dropdowns
-    # -------------------------
 
     level_dropdown = ft.Dropdown(
         label="Select Level",
@@ -40,31 +36,23 @@ def build_ui(page: ft.Page):
 
     trick_list = ft.Column()
 
-
-    # -------------------------
     # Progress
-    # -------------------------
 
     completed_tricks = 0
     total_tricks = 0
-
 
     progress_text = ft.Text(
         "Completed: 0/0",
         size=18
     )
 
-
     progress_bar = ft.ProgressBar(
         width=500,
         value=0
     )
 
-
-    # -------------------------
     # Events
-    # -------------------------
-
+    
     def update_session_progress(change):
 
         nonlocal completed_tricks
@@ -95,7 +83,6 @@ def build_ui(page: ft.Page):
             for c in classes
         ]
 
-
         class_dropdown.value = None
         print(class_dropdown.options)
         class_dropdown.update()
@@ -104,38 +91,30 @@ def build_ui(page: ft.Page):
 
     level_dropdown.on_select = level_changed
 
-
     def start_practice(e):
 
         nonlocal total_tricks
         nonlocal completed_tricks
 
-
         print("Starting Practice")
         print(level_dropdown.value)
         print(class_dropdown.value)
-
 
         tricks = get_tricks(
             level_dropdown.value,
             class_dropdown.value
         )
 
-
         trick_list.controls.clear()
-
 
         total_tricks = len(tricks)
         completed_tricks = 0
-
 
         progress_text.value = (
             f"Completed: 0/{total_tricks}"
         )
 
-
         progress_bar.value = 0
-
 
         for number, trick in enumerate(
             tricks,
@@ -149,25 +128,18 @@ def build_ui(page: ft.Page):
                 update_session_progress
             )
 
-
             trick_list.controls.append(
                 card.view()
             )
 
-
         page.update()
-
-
 
     start_button = ft.ElevatedButton(
         "Start Practice",
         on_click=start_practice
     )
 
-
-    # -------------------------
     # Layout
-    # -------------------------
 
     page.add(
 
