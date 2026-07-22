@@ -33,9 +33,6 @@ def build_ui(page: ft.Page):
         ]
     )
 
-
-  
-
     class_dropdown = ft.Dropdown(
         label="Select Class",
         options=[]
@@ -86,8 +83,6 @@ def build_ui(page: ft.Page):
         page.update()
 
     def level_changed(e):
-        print("LEVEL CHANGED")
-        print("Selected:", level_dropdown.value)
 
         classes = get_classes(
             level_dropdown.value
@@ -107,35 +102,7 @@ def build_ui(page: ft.Page):
 
         page.update()
 
-
-    def old_level_changed(e):
-
-        print("===== LEVEL CHANGED =====")
-        print("Selected Level:",level_dropdown.value)
-
-
-        classes = get_classes(
-            level_dropdown.value
-        )
-
-
-        print("Classes returned:", classes)
-
-
-        class_dropdown.options = [
-            ft.dropdown.Option(c)
-            for c in classes
-        ]
-
-        print("Dropdown options updated")
-
-        class_dropdown.value = None
-
-        page.update()
-
-
-
-    level_dropdown.on_change = level_changed
+    level_dropdown.on_select = level_changed
 
 
     def start_practice(e):
